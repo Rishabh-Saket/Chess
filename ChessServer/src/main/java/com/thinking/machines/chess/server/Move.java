@@ -7,4 +7,5 @@ public class Move implements java.io.Serializable
     public byte fromY;
     public byte toX;
     public byte toY;
+    public boolean isLastMove;
 }
