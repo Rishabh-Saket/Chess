@@ -1,6 +1,9 @@
 package com.thinking.machines.chess.server;
 import com.thinking.machines.chess.server.dl.*;
+import com.thinking.machines.nframework.server.*;
+import com.thinking.machines.nframework.server.annotations.*;
 import java.util.*;
+@Path("/ChessServer")
 public class ChessServer
 {
     private Map<String,Member> members;
@@ -33,7 +36,8 @@ public class ChessServer
         this.games=new HashMap<>();
     }
 
-    public boolean isUserAuthentic(String username,String password)
+    @Path("/authenticateMember")
+    public boolean isMemberAuthentic(String username,String password)
     {
         Member member=this.members.get(username);
         if(member==null) return false;
@@ -45,6 +49,7 @@ public class ChessServer
         return b;
     }
 
+    @Path("/logout")
     public void logout(String username)
     {
         this.loggedInMembers.remove(username);
@@ -111,4 +116,12 @@ public class ChessServer
 
 
     //create services to enable log-in,log-out,etc..
+
+    /*
+     * /ChessServer
+     * /authenticateMember args: username and password
+     * /logout args: username 
+     * /getMembers args: username
+     * 
+     */
 }
