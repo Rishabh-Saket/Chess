@@ -55,7 +55,7 @@ public class ChessServer
         this.loggedInMembers.remove(username);
 
     }
-
+    @Path("/getMembers")
     public List<String> getAvailableUser(String username)
     {
         List<String> availableUser=new LinkedList<>();
@@ -122,6 +122,6 @@ public class ChessServer
      * /authenticateMember args: username and password
      * /logout args: username 
      * /getMembers args: username
-     * 
+     * Port 5502
      */
 }

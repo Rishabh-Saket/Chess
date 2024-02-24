@@ -1,0 +1,5 @@
+apply plugin: 'java'
+dependencies
+{
+    implementation files('../../Kelkar/java/JavaProjects/nframework/client/build/libs/nframework-client.jar')
+}
