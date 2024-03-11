@@ -6,18 +6,17 @@ import java.util.*;
 @Path("/ChessServer")
 public class ChessServer
 {
-    private Map<String,Member> members;
-    private Set<String> loggedInMembers;    
-    private Set<String> playingMembers;
-    private Map<String,List<Message>> inboxes;
-    private Map<String,Game> games;
-    public ChessServer()
+    private static Map<String,Member> members;
+    private static Set<String> loggedInMembers;    
+    private static Set<String> playingMembers;
+    private static Map<String,List<Message>> inboxes;
+    private static Map<String,Game> games;
+    static
     {
         populateDataStructures();
     }
-
     
-    public void populateDataStructures()
+    private static void populateDataStructures()
     {
         MemberDAO memberDAO=new MemberDAO();
         List<MemberDTO> dlMembers=memberDAO.getAll();
@@ -28,23 +27,23 @@ public class ChessServer
             member=new Member();
             member.username=memberDTO.username;
             member.password=memberDTO.password;
-            this.members.put(member.username,member);
+            members.put(member.username,member);
         }
-        this.loggedInMembers=new HashSet<>();
-        this.playingMembers=new HashSet<>();
-        this.inboxes=new HashMap<>();
-        this.games=new HashMap<>();
+        loggedInMembers=new HashSet<>();
+        playingMembers=new HashSet<>();
+        inboxes=new HashMap<>();
+        games=new HashMap<>();
     }
 
     @Path("/authenticateMember")
     public boolean isMemberAuthentic(String username,String password)
     {
-        Member member=this.members.get(username);
+        Member member=members.get(username);
         if(member==null) return false;
         boolean b= password.equals(member.password);
         if(b)
         {
-            this.loggedInMembers.add(username);
+            loggedInMembers.add(username);
         }
         return b;
     }
@@ -52,7 +51,7 @@ public class ChessServer
     @Path("/logout")
     public void logout(String username)
     {
-        this.loggedInMembers.remove(username);
+        loggedInMembers.remove(username);
 
     }
     @Path("/getMembers")
@@ -90,10 +89,10 @@ public class ChessServer
 
     public List<Message> getMessages(String username)
     {
-        List<Message> messages=this.inboxes.get(username);
+        List<Message> messages=inboxes.get(username);
         if(messages!=null && messages.size()>0)
         {
-            this.inboxes.put(username, new LinkedList<>());
+            inboxes.put(username, new LinkedList<>());
         }
         return messages;
     }

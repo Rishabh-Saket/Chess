@@ -11,7 +11,11 @@ public class Main
             NFrameworkClient client=new NFrameworkClient();
             //String branchName=(String)client.execute("/banking/branchName",args[0]);
             boolean isUserAuthentic=(boolean)client.execute("/ChessServer/authenticateMember",username,password);
-            if(isUserAuthentic) System.out.println("Cool you are the right person");
+            if(isUserAuthentic)
+            {
+                ChessUI chessUI=new ChessUI(username);
+                chessUI.showUI();
+            }
             else System.out.println("Invalid username/password");
         }catch(Throwable t)
         {
