@@ -1,0 +1,1 @@
+java -classpath ..\..\Kelkar\java\JavaProjects\nframework\server\build\libs\nframework-server.jar;..\..\Kelkar\java\JavaProjects\nframework\common\build\libs\nframework-common.jar;C:\gson\gson-2.10.1.jar;build\libs\ChessServer.jar;. com.thinking.machines.chess.server.Main
