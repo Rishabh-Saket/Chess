@@ -102,11 +102,11 @@ public class ChessUI extends JFrame
     {
         private java.util.List<String> members;
         private String title[]={"Members"," "};
-        private JButton inviteButton;
+        private java.util.List<JButton> inviteButtons;
         AvailableMembersListModel()
         {
             members=new LinkedList<>();
-            inviteButton=new JButton("Invite");
+            inviteButtons=new LinkedList<>();
         }
 
         public int getRowCount()
@@ -127,7 +127,7 @@ public class ChessUI extends JFrame
         public Object getValueAt(int row,int column)
         {
             if(column==0) return this.members.get(row);
-            return inviteButton;
+            return this.inviteButtons.get(row);
         }
 
         public boolean isCellEditable(int row,int column)
@@ -145,7 +145,20 @@ public class ChessUI extends JFrame
         public void setMembers(java.util.List<String> members)
         {
             this.members=members;
+            this.inviteButtons.clear();
+            for(int i=0;i<this.members.size();i++) this.inviteButtons.add(new JButton("invite"));
             fireTableDataChanged();
+        }
+
+        public void setValueAt(Object data, int row , int column)
+        {
+            if(column==1)
+            {
+                JButton button= this.inviteButtons.get(row);
+                button.setText((String)data);
+                button.setEnabled(false);
+                fireTableDataChanged();
+            }
         }
     }
 
@@ -160,35 +173,39 @@ public class ChessUI extends JFrame
 
     class AvailableMembersListButtonCellEditor extends DefaultCellEditor 
     {
-        private JButton button;
         private boolean isClicked;
         private int row, column;
+        private ActionListener actionListener;
+        private JButton button;
     
         AvailableMembersListButtonCellEditor() {
             super(new JCheckBox());
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(new ActionListener() {
+            //button.setOpaque(true);
+            this.actionListener=new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
                     System.out.println("Great");
                     fireEditingStopped();
                 }
-            });
+            };
         }
     
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) 
         {    
             this.row = row;
             this.column = column;
-            button.setForeground(Color.black);
-            button.setBackground(UIManager.getColor("Button.background"));
-            button.setText("Invite");
+            this.button= (JButton)availableMembersList.getValueAt(row, column);
+            this.button.removeActionListener(this.actionListener);
+            this.button.addActionListener(this.actionListener);
+            this.button.setForeground(Color.black);
+            this.button.setBackground(UIManager.getColor("Button.background"));
+            this.button.setText("Invite");
             isClicked = true;
-            return button;
+            return this.button;
         }
     
         public Object getCellEditorValue() {
-            return "Invite";
+            System.out.println("Button at cell: "+this.row+","+this.column+" got clicked");
+            return "Invited";
         }
     
         public boolean stopCellEditing() {
