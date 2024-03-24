@@ -97,16 +97,30 @@ public class ChessUI extends JFrame
         this.setVisible(true);
     }
 
+    private void sendInvitation(String toUsername)
+    {
+        try
+        {
+        client.execute("/ChessServer/inviteUser",username,toUsername);
+        }catch(Throwable t)
+        {
+            JOptionPane.showMessageDialog(ChessUI.this,t);
+        }
+        JOptionPane.showMessageDialog(this, "Invitation sent to "+toUsername);
+    }
+
     //inner class starts here
     class AvailableMembersListModel extends AbstractTableModel
     {
         private java.util.List<String> members;
         private String title[]={"Members"," "};
         private java.util.List<JButton> inviteButtons;
+        private boolean awaitingInvitationReply;
         AvailableMembersListModel()
         {
             members=new LinkedList<>();
             inviteButtons=new LinkedList<>();
+            awaitingInvitationReply=false;
         }
 
         public int getRowCount()
@@ -144,6 +158,7 @@ public class ChessUI extends JFrame
 
         public void setMembers(java.util.List<String> members)
         {
+            if(awaitingInvitationReply) return;
             this.members=members;
             this.inviteButtons.clear();
             for(int i=0;i<this.members.size();i++) this.inviteButtons.add(new JButton("invite"));
@@ -155,9 +170,22 @@ public class ChessUI extends JFrame
             if(column==1)
             {
                 JButton button= this.inviteButtons.get(row);
-                button.setText((String)data);
-                button.setEnabled(false);
-                fireTableDataChanged();
+                String text=(String)data;
+                button.setText(text);
+                if(text.equalsIgnoreCase("Invited"))
+                {
+                    awaitingInvitationReply=true;
+                    for(JButton inviteButton: inviteButtons) inviteButton.setEnabled(false);
+                    fireTableDataChanged();
+                    ChessUI.this.sendInvitation(this.members.get(row));
+                }
+                else if(text.equalsIgnoreCase("Invite"))
+                {
+                    awaitingInvitationReply=false;
+                    for(JButton inviteButton: inviteButtons) inviteButton.setEnabled(true);
+                    fireTableDataChanged();
+                }
+
             }
         }
     }
@@ -183,7 +211,6 @@ public class ChessUI extends JFrame
             //button.setOpaque(true);
             this.actionListener=new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
-                    System.out.println("Great");
                     fireEditingStopped();
                 }
             };
@@ -204,7 +231,6 @@ public class ChessUI extends JFrame
         }
     
         public Object getCellEditorValue() {
-            System.out.println("Button at cell: "+this.row+","+this.column+" got clicked");
             return "Invited";
         }
     

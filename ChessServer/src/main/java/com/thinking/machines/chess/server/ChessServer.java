@@ -72,6 +72,7 @@ public class ChessServer
         return null;
     }
 
+    @Path("/inviteUser")
     public void inviteUser(String fromUsername,String toUsername)
     {
         Message message=new Message();
